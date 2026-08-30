@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FeedUp — A chain of restaurants</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:Arial, Helvetica, sans-serif;}
+
+  body{
+    background:#ffffff;
+    color:#1c1c1c;
+  }
+
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    padding-bottom:40px;
+  }
+
+  /* ================= HEADER ================= */
+  .header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:14px 16px;
+    background:#ffffff;
+    border-bottom:1px solid #eee;
+    position:sticky;
+    top:0;
+    z-index:20;
+  }
+
+  .logo{
+    display:flex;
+    align-items:center;
+    background:#1c1c1c;
+    border-radius:8px;
+    overflow:hidden;
+    flex-shrink:0;
+    height:36px;
+  }
+  .logo .feed{
+    color:#f7c948;
+    font-weight:800;
+    font-style:italic;
+    font-size:1rem;
+    padding:0 8px 0 12px;
+  }
+  .logo .up{
+    background:#e8352d;
+    color:#fff;
+    font-weight:800;
+    font-style:italic;
+    font-size:1rem;
+    padding:8px 14px;
+    height:100%;
+    display:flex;
+    align-items:center;
+  }
+
+  .order-type{
+    background:#e8352d;
+    color:#fff;
+    border:none;
+    border-radius:24px;
+    padding:9px 18px;
+    font-size:0.85rem;
+    font-weight:500;
+    cursor:pointer;
+    white-space:nowrap;
+    flex-shrink:0;
+    transition:background .2s, transform .15s;
+  }
+  .order-type:hover{background:#d12c25;}
+  .order-type:active{transform:scale(0.96);}
+
+  .icons{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-shrink:0;
+  }
+  .icon-btn{
+    background:none;
+    border:none;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    padding:2px;
+  }
+  .icon-btn svg{width:21px;height:21px;stroke:#1c1c1c;fill:none;stroke-width:2;}
+  .cart-badge{
+    position:absolute;
+    top:-3px;
+    right:-3px;
+    background:#e8352d;
+    color:#fff;
+    font-size:0.6rem;
+    font-weight:700;
+    width:15px;
+    height:15px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* ================= BANNER SLIDER ================= */
+  .banner-wrap{
+    padding:16px;
+  }
+  .banner{
+    position:relative;
+    background:linear-gradient(135deg,#c81e1e,#e8352d);
+    border-radius:16px;
+    overflow:hidden;
+    min-height:260px;
+    display:flex;
+    align-items:center;
+    padding:20px;
+    color:#fff;
+  }
+  .banner-food{
+    font-size:5rem;
+    line-height:1;
+    flex-shrink:0;
+    filter:drop-shadow(0 8px 10px rgba(0,0,0,.35));
+  }
+  .banner-text{
+    padding-left:14px;
+    flex:1;
+  }
+  .banner-logo{
+    display:inline-flex;
+    align-items:center;
+    background:#1c1c1c;
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:10px;
+    float:right;
+    height:24px;
+  }
+  .banner-logo .feed{color:#f7c948;font-weight:800;font-style:italic;font-size:0.7rem;padding:0 5px 0 8px;}
+  .banner-logo .up{background:#e8352d;color:#fff;font-weight:800;font-style:italic;font-size:0.7rem;padding:5px 8px;}
+  .banner-sub{
+    font-size:0.72rem;
+    opacity:0.9;
+    margin-bottom:2px;
+    clear:both;
+    padding-top:26px;
+  }
+  .banner-sub2{
+    font-size:0.62rem;
+    opacity:0.7;
+    margin-bottom:10px;
+  }
+  .banner-title{
+    font-family:Georgia, serif;
+    font-style:italic;
+    font-size:1.7rem;
+    color:#f7c948;
+    margin-bottom:10px;
+  }
+  .banner-price-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .discount{color:#fff;font-weight:700;font-size:1.1rem;}
+  .price-new{
+    background:#f7c948;
+    color:#1c1c1c;
+    font-weight:800;
+    padding:4px 10px;
+    border-radius:6px;
+    font-size:1rem;
+  }
+  .price-old{
+    text-decoration:line-through;
+    opacity:0.6;
+    font-size:0.95rem;
+    display:block;
+    margin-top:6px;
+  }
+  .dots{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    margin-top:12px;
+  }
+  .dots span{
+    width:8px;height:8px;border-radius:50%;
+    background:#e0e0e0;
+  }
+  .dots span.active{
+    width:20px;border-radius:4px;
+    background:#e8352d;
+  }
+
+  /* ================= CATEGORY TABS ================= */
+  .tabs-wrap{
+    display:flex;
+    align-items:center;
+    padding:10px 12px;
+    gap:6px;
+  }
+  .tab-arrow{
+    background:none;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    color:#888;flex-shrink:0;
+  }
+  .tab-arrow svg{width:20px;height:20px;stroke:#888;fill:none;stroke-width:2;}
+  .tabs{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    flex:1;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    flex-shrink:0;
+    padding:10px 20px;
+    border-radius:24px;
+    font-size:0.9rem;
+    white-space:nowrap;
+    cursor:pointer;
+    border:1px solid transparent;
+    color:#333;
+    background:transparent;
+  }
+  .tab.active{
+    border-color:#e8352d;
+    color:#e8352d;
+  }
+
+  /* ================= SECTION TITLE ================= */
+  .section-title{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin:28px 16px 20px;
+  }
+  .section-title .line{
+    flex:1;height:1px;background:#e8352d;opacity:.5;
+  }
+  .section-title h2{
+    font-size:1.7rem;
+    font-weight:800;
+    white-space:nowrap;
+  }
+
+  /* ================= PRODUCT GRID ================= */
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    padding:0 16px;
+  }
+  .card{
+    border:1px solid #eee;
+    border-radius:16px;
+    padding:14px;
+    position:relative;
+    background:#fff;
+  }
+  .badge-new{
+    position:absolute;
+    top:12px;left:12px;
+    background:linear-gradient(90deg,#e8352d,#f0578a);
+    color:#fff;
+    font-size:0.68rem;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:8px;
+    z-index:2;
+  }
+  .badge-discount{
+    position:absolute;
+    top:8px;right:44px;
+    background:#e8352d;
+    color:#fff;
+    font-size:0.68rem;
+    font-weight:800;
+    width:40px;height:40px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform:rotate(-8deg);
+    z-index:2;
+  }
+  .fav-btn{
+    position:absolute;
+    top:12px;right:12px;
+    background:#fff;
+    border:1.5px solid #eee;
+    border-radius:50%;
+    width:30px;height:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:2;
+  }
+  .fav-btn svg{width:15px;height:15px;stroke:#e8352d;fill:none;stroke-width:2;}
+  .card-img{
+    font-size:3.6rem;
+    text-align:center;
+    padding:26px 0 14px;
+  }
+  .card h3{
+    font-size:0.82rem;
+    font-weight:700;
+    letter-spacing:0.5px;
+    margin-bottom:8px;
+    text-transform:uppercase;
+  }
+  .price-row{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    margin-bottom:12px;
+  }
+  .price-row .new{font-size:1.15rem;font-weight:800;}
+  .price-row .old{font-size:0.85rem;color:#aaa;text-decoration:line-through;}
+  .add-btn{
+    width:100%;
+    padding:10px;
+    border:1.5px solid #2e9e6c;
+    color:#2e9e6c;
+    background:transparent;
+    border-radius:24px;
+    font-weight:700;
+    font-size:0.9rem;
+    cursor:pointer;
+    transition:background .2s, color .2s;
+  }
+  .add-btn:hover{background:#2e9e6c;color:#fff;}
+
+  /* floating button */
+  .fab{
+    position:fixed;
+    right:20px;
+    bottom:24px;
+    width:56px;height:56px;
+    border-radius:50%;
+    background:#e8352d;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 6px 16px rgba(232,53,45,.4);
+    cursor:pointer;
+    z-index:30;
+  }
+  .fab svg{width:22px;height:22px;fill:#fff;}
+
+  @media (max-width:400px){
+    .header{padding:12px 10px;}
+    .order-type{padding:7px 12px;font-size:0.78rem;}
+    .banner{padding:16px;min-height:220px;}
+    .banner-food{font-size:3.6rem;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+    <!-- ================= HEADER ================= -->
+  <div class="header">
+    <div class="logo">
+      <span class="feed">feed</span>
+      <span class="up">up</span>
+    </div>
+
+    <button class="order-type">Order type</button>
+
+    <div class="icons">
+      <button class="icon-btn" aria-label="Qidiruv">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+      <button class="icon-btn" aria-label="Savatcha">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        <span class="cart-badge">2</span>
+      </button>
+      <button class="icon-btn" aria-label="Profil">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg>
+      </button>
+      <button class="icon-btn" aria-label="Menyu">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= BANNER ================= -->
+  <div class="banner-wrap">
+    <div class="banner">
+      <div class="banner-logo"><span class="feed">feed</span><span class="up">up</span></div>
+      <div class="banner-food">🥙🍟</div>
+      <div class="banner-text">
+        <div class="banner-sub">Специальное ограниченное предложение</div>
+        <div class="banner-sub2">Действует только при доставке</div>
+        <div class="banner-title">Комбо Donarchi</div>
+        <div class="banner-price-row">
+          <span class="discount">-24%</span>
+          <span class="price-new">45.000</span>
+        </div>
+        <span class="price-old">59.000</span>
+      </div>
+    </div>
+    <div class="dots">
+      <span class="active"></span><span></span><span></span>
+    </div>
+  </div>
+
+  <!-- ================= TABS ================= -->
+  <div class="tabs-wrap">
+    <button class="tab-arrow" aria-label="Oldinga">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <div class="tabs">
+      <div class="tab active">New products</div>
+      <div class="tab">Kombo</div>
+      <div class="tab">Lava</div>
+      <div class="tab">Burger</div>
+      <div class="tab">Pizza</div>
+    </div>
+    <button class="tab-arrow" aria-label="Keyingi">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>
+
+  <!-- ================= SECTION TITLE ================= -->
+  <div class="section-title">
+    <span class="line"></span>
+    <h2>New products</h2>
+    <span class="line"></span>
+  </div>
+
+  <!-- ================= PRODUCT GRID ================= -->
+  <div class="grid">
+
+    <div class="card">
+      <span class="badge-new">New</span>
+      <button class="fav-btn" aria-label="Sevimlilar">
+        <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+      </button>
+      <div class="card-img">🥙🍟</div>
+      <h3>Donarchi</h3>
+      <div class="price-row">
+        <span class="new">45 000</span>
+        <span class="old">59 000</span>
+      </div>
+      <button class="add-btn">Add</button>
+    </div>
+
+    <div class="card">
+      <span class="badge-new">New</span>
+      <span class="badge-discount">30%</span>
+      <button class="fav-btn" aria-label="Sevimlilar">
+        <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+      </button>
+      <div class="card-img">🥪🍟</div>
+      <h3>Piramida combo</h3>
+      <div class="price-row">
+        <span class="new">38 000</span>
+        <span class="old">56 000</span>
+      </div>
+      <button class="add-btn">Add</button>
+    </div>
+    <div class="card">
+      <button class="fav-btn" aria-label="Sevimlilar">
+        <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+      </button>
+      <div class="card-img">🍕</div>
+      <h3>Pepperoni Pizza</h3>
+      <div class="price-row">
+        <span class="new">52 000</span>
+      </div>
+      <button class="add-btn">Add</button>
+    </div>
+
+    <div class="card">
+      <span class="badge-new">New</span>
+      <button class="fav-btn" aria-label="Sevimlilar">
+        <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+      </button>
+      <div class="card-img">🍔</div>
+      <h3>Cheese Burger</h3>
+      <div class="price-row">
+        <span class="new">34 000</span>
+      </div>
+      <button class="add-btn">Add</button>
+    </div>
+
+  </div>
+
+  <!-- FLOATING BUTTON -->
+  <div class="fab" aria-label="Kategoriyalar">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+  </div>
+
+</div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Favorite toggle
+  document.querySelectorAll('.fav-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const svg = btn.querySelector('svg');
+      const isActive = svg.getAttribute('fill') === '#e8352d';
+      svg.setAttribute('fill', isActive ? 'none' : '#e8352d');
+    });
+  });
+
+  // Add button feedback
+  document.querySelectorAll('.add-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btn.textContent = 'Added ✓';
+      btn.style.background = '#2e9e6c';
+      btn.style.color = '#fff';
+      setTimeout(()=>{
+        btn.textContent = 'Add';
+        btn.style.background = 'transparent';
+        btn.style.color = '#2e9e6c';
+      }, 1200);
+    });
+  });
+</script>
+
+</body>
+</html>
